@@ -50,11 +50,17 @@
   body{
     margin:0;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
-    background: var(--bg);
+    background-color: var(--bg);
+    background-image: url('assets/wallpaper.png');
+    background-repeat: repeat;
+    background-size: 136px 136px;
     color: var(--text);
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
     overscroll-behavior-y: none;
+  }
+  @media (prefers-color-scheme: dark){
+    body{ background-image: none; }
   }
   #app{ max-width: 480px; margin: 0 auto; min-height: 100vh; display:flex; flex-direction:column; }
 
@@ -85,7 +91,9 @@
   .section-label{
     display:flex; justify-content:space-between; align-items:center;
     font-size: 0.74rem; font-weight: 800; color: var(--text-soft);
-    text-transform: uppercase; letter-spacing:.04em; margin: 18px 2px 8px;
+    text-transform: uppercase; letter-spacing:.04em; margin: 18px 0 8px;
+    background: var(--card); border: 1px solid var(--border);
+    padding: 8px 12px; border-radius: 12px; box-shadow: var(--shadow);
   }
   .section-label .count{
     background: var(--accent-soft); color: var(--accent); padding: 2px 9px;
@@ -94,9 +102,18 @@
   .section-label.first{ margin-top: 4px; }
 
   .ex-card{
-    background: var(--card); border-radius: var(--radius); border:1px solid var(--border);
+    background: rgba(107, 63, 160, 0.58);
+    -webkit-backdrop-filter: blur(22px) saturate(1.1); backdrop-filter: blur(22px) saturate(1.1);
+    border-radius: var(--radius); border:1px solid rgba(107, 63, 160, 0.4);
     box-shadow: var(--shadow); padding: 14px 14px 14px 12px; margin-bottom: 12px;
     display:flex; gap:12px; align-items:flex-start; transition: opacity .2s ease;
+  }
+  .ex-card .ex-name{ color:#fff; }
+  .ex-card .ex-detail{ color: rgba(255,255,255,0.85); }
+  .ex-card .ex-meta{ color: rgba(255,255,255,0.9); }
+  .ex-card .ex-meta span b{ color:#fff; }
+  @media (prefers-color-scheme: dark){
+    .ex-card{ background: rgba(60, 36, 92, 0.62); border-color: rgba(180, 143, 224, 0.35); }
   }
   .ex-card.done{ opacity: 0.55; }
   .ex-icon{
@@ -133,7 +150,8 @@
 
   .goto-cardio{
     display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
-    background: transparent; border: 1.5px dashed var(--border); color: var(--primary-dark);
+    background: var(--card); border: 1.5px dashed var(--border); color: var(--primary-dark);
+    box-shadow: var(--shadow);
     padding: 13px; border-radius: 16px; font-weight: 700; font-size: 0.88rem; cursor:pointer; margin: 4px 0 14px;
   }
   .goto-cardio svg{ width:16px; height:16px; }
@@ -146,7 +164,10 @@
   .complete-btn.done{ background: var(--accent); }
   .complete-btn:active{ transform: scale(0.98); }
 
-  .status-row{ margin-top: 12px; text-align:center; font-size: 0.78rem; color: var(--text-soft); }
+  .status-row{
+    margin-top: 12px; text-align:center; font-size: 0.78rem; color: var(--text-soft);
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 10px 12px;
+  }
 
   /* Tab bar */
   nav.tabbar{
@@ -241,6 +262,28 @@
   }
   .modal-video-btn svg{ width:17px; height:17px; }
   .modal-video-note{ text-align:center; font-size:0.72rem; color: var(--text-soft); margin-top:8px; }
+
+  /* Celebration overlay */
+  .celebrate-overlay{
+    position:fixed; inset:0; background: rgba(12,6,22,0.78); z-index:300;
+    display:flex; align-items:center; justify-content:center; padding: 22px;
+    opacity:0; pointer-events:none; transition: opacity .25s ease;
+  }
+  .celebrate-overlay.open{ opacity:1; pointer-events:auto; }
+  .celebrate-card{
+    max-width: 380px; width:100%; background: var(--card); border-radius: 24px; overflow:hidden;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    transform: scale(0.85) translateY(10px); transition: transform .35s cubic-bezier(.2,.9,.25,1.4);
+  }
+  .celebrate-overlay.open .celebrate-card{ transform: scale(1) translateY(0); }
+  .celebrate-card img{ width:100%; display:block; max-height:60vh; object-fit:cover; }
+  .celebrate-body{ padding: 18px 20px calc(20px + env(safe-area-inset-bottom)); text-align:center; }
+  .celebrate-title{ font-size:1.15rem; font-weight:800; color: var(--primary-dark); margin:0 0 4px; }
+  .celebrate-sub{ font-size:0.85rem; color: var(--text-soft); margin:0 0 16px; }
+  .celebrate-close{
+    width:100%; padding:14px; border:none; border-radius:16px; background: var(--primary);
+    color:#fff; font-weight:800; font-size:0.92rem; cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -345,6 +388,19 @@
     <p class="modal-video-note">Abre no YouTube · requer internet</p>
   </div>
 </div>
+
+<!-- CELEBRAÇÃO: aparece ao concluir o treino do dia -->
+<div class="celebrate-overlay" id="celebrate-overlay">
+  <div class="celebrate-card">
+    <img src="assets/celebration.jpg" alt="Foto de comemoração">
+    <div class="celebrate-body">
+      <p class="celebrate-title">Treino concluído!</p>
+      <p class="celebrate-sub">Mais um dia na conta — continue assim.</p>
+      <button class="celebrate-close" id="celebrate-close-btn">Fechar</button>
+    </div>
+  </div>
+</div>
+<audio id="celebrate-audio" src="assets/celebration-audio.mp3" preload="none"></audio>
 
 <script>
 /* ---------------- ICONS (inline SVG, no emoji) ---------------- */
@@ -575,10 +631,32 @@ document.getElementById('complete-day-btn').addEventListener('click', ()=>{
     completions.push({ date: todayKey(), type: currentWorkout });
     checkedState = flatList(currentWorkout).map((_,i)=>i);
     save('lf_checked_' + todayKey() + '_' + currentWorkout, checkedState);
+    showCelebration();
   }
   save('lf_completions', completions);
   renderExercises();
   renderStatus();
+});
+
+/* ---------------- CELEBRAÇÃO (dia concluído) ---------------- */
+function showCelebration(){
+  const overlay = document.getElementById('celebrate-overlay');
+  overlay.classList.add('open');
+  const audio = document.getElementById('celebrate-audio');
+  audio.currentTime = 0;
+  audio.play().catch(()=>{ /* autoplay pode ser bloqueado; o usuário ainda vê a foto */ });
+}
+
+function hideCelebration(){
+  const overlay = document.getElementById('celebrate-overlay');
+  overlay.classList.remove('open');
+  const audio = document.getElementById('celebrate-audio');
+  audio.pause();
+}
+
+document.getElementById('celebrate-close-btn').addEventListener('click', hideCelebration);
+document.getElementById('celebrate-overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'celebrate-overlay') hideCelebration();
 });
 
 function renderStatus(){

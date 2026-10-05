@@ -4,7 +4,10 @@ const ASSETS = [
   './index.html',
   './manifest.json',
   './icons/icon-192.png',
-  './icons/icon-512.png'
+  './icons/icon-512.png',
+  './assets/wallpaper.png',
+  './assets/celebration.jpg',
+  './assets/celebration-audio.mp3'
 ];
 
 self.addEventListener('install', (event) => {
