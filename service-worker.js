@@ -6,6 +6,7 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './assets/wallpaper.png',
+  './assets/wallpaper-dark.png',
   './assets/celebration.jpg',
   './assets/celebration-audio.mp3'
 ];

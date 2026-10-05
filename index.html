@@ -60,7 +60,7 @@
     overscroll-behavior-y: none;
   }
   @media (prefers-color-scheme: dark){
-    body{ background-image: none; }
+    body{ background-image: url('assets/wallpaper-dark.png'); }
   }
   #app{ max-width: 480px; margin: 0 auto; min-height: 100vh; display:flex; flex-direction:column; }
 
@@ -263,27 +263,35 @@
   .modal-video-btn svg{ width:17px; height:17px; }
   .modal-video-note{ text-align:center; font-size:0.72rem; color: var(--text-soft); margin-top:8px; }
 
-  /* Celebration overlay */
+  /* Celebration overlay — foto em tela cheia */
   .celebrate-overlay{
-    position:fixed; inset:0; background: rgba(12,6,22,0.78); z-index:300;
-    display:flex; align-items:center; justify-content:center; padding: 22px;
-    opacity:0; pointer-events:none; transition: opacity .25s ease;
+    position:fixed; inset:0; background: #000; z-index:300;
+    opacity:0; pointer-events:none; transition: opacity .3s ease;
   }
   .celebrate-overlay.open{ opacity:1; pointer-events:auto; }
-  .celebrate-card{
-    max-width: 380px; width:100%; background: var(--card); border-radius: 24px; overflow:hidden;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.45);
-    transform: scale(0.85) translateY(10px); transition: transform .35s cubic-bezier(.2,.9,.25,1.4);
+  .celebrate-photo-wrap{
+    position:absolute; inset:0; overflow:hidden;
+    transform: scale(1.04); transition: transform .4s cubic-bezier(.2,.9,.25,1.4);
   }
-  .celebrate-overlay.open .celebrate-card{ transform: scale(1) translateY(0); }
-  .celebrate-card img{ width:100%; display:block; max-height:60vh; object-fit:cover; }
-  .celebrate-body{ padding: 18px 20px calc(20px + env(safe-area-inset-bottom)); text-align:center; }
-  .celebrate-title{ font-size:1.15rem; font-weight:800; color: var(--primary-dark); margin:0 0 4px; }
-  .celebrate-sub{ font-size:0.85rem; color: var(--text-soft); margin:0 0 16px; }
+  .celebrate-overlay.open .celebrate-photo-wrap{ transform: scale(1); }
+  .celebrate-photo-wrap img{ width:100%; height:100%; display:block; object-fit:cover; }
+  .celebrate-scrim{
+    position:absolute; left:0; right:0; bottom:0; padding: 40px 20px calc(26px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0) 100%);
+    text-align:center;
+  }
+  .celebrate-title{ font-size:1.25rem; font-weight:800; color:#fff; margin:0 0 4px; }
+  .celebrate-sub{ font-size:0.88rem; color: rgba(255,255,255,0.85); margin:0 0 16px; }
   .celebrate-close{
-    width:100%; padding:14px; border:none; border-radius:16px; background: var(--primary);
+    width:100%; max-width:380px; padding:14px; border:none; border-radius:16px; background: var(--primary);
     color:#fff; font-weight:800; font-size:0.92rem; cursor:pointer;
   }
+  .celebrate-x{
+    position:absolute; top: calc(16px + env(safe-area-inset-top)); right:16px; z-index:2;
+    width:36px; height:36px; border-radius:50%; border:none; background: rgba(0,0,0,0.45);
+    color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .celebrate-x svg{ width:17px; height:17px; }
 </style>
 </head>
 <body>
@@ -389,15 +397,16 @@
   </div>
 </div>
 
-<!-- CELEBRAÇÃO: aparece ao concluir o treino do dia -->
+<!-- CELEBRAÇÃO: aparece ao concluir o treino do dia, foto em tela cheia -->
 <div class="celebrate-overlay" id="celebrate-overlay">
-  <div class="celebrate-card">
+  <button class="celebrate-x" id="celebrate-x-btn" aria-label="Fechar" type="button"></button>
+  <div class="celebrate-photo-wrap">
     <img src="assets/celebration.jpg" alt="Foto de comemoração">
-    <div class="celebrate-body">
-      <p class="celebrate-title">Treino concluído!</p>
-      <p class="celebrate-sub">Mais um dia na conta — continue assim.</p>
-      <button class="celebrate-close" id="celebrate-close-btn">Fechar</button>
-    </div>
+  </div>
+  <div class="celebrate-scrim">
+    <p class="celebrate-title">Treino concluído!</p>
+    <p class="celebrate-sub">Mais um dia na conta — continue assim.</p>
+    <button class="celebrate-close" id="celebrate-close-btn">Fechar</button>
   </div>
 </div>
 <audio id="celebrate-audio" src="assets/celebration-audio.mp3" preload="none"></audio>
@@ -654,10 +663,10 @@ function hideCelebration(){
   audio.pause();
 }
 
+document.getElementById('celebrate-x-btn').innerHTML = ICONS.close;
 document.getElementById('celebrate-close-btn').addEventListener('click', hideCelebration);
-document.getElementById('celebrate-overlay').addEventListener('click', (e)=>{
-  if(e.target.id === 'celebrate-overlay') hideCelebration();
-});
+document.getElementById('celebrate-x-btn').addEventListener('click', hideCelebration);
+document.querySelector('.celebrate-photo-wrap').addEventListener('click', hideCelebration);
 
 function renderStatus(){
   const row = document.getElementById('status-row');
