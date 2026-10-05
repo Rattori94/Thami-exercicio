@@ -58,17 +58,9 @@
   }
   #app{ max-width: 480px; margin: 0 auto; min-height: 100vh; display:flex; flex-direction:column; }
 
-  header.topbar{
-    padding: 18px 20px 14px;
-    text-align:center;
-  }
-  header.topbar h1{
-    margin:0; font-size: 1.5rem; font-weight: 800; color: var(--primary-dark);
-    letter-spacing: -0.02em;
-  }
-  header.topbar p{
-    margin: 4px 0 0; font-size: 0.85rem; color: var(--text-soft);
-  }
+  header.topbar{ padding: 18px 20px 14px; text-align:center; }
+  header.topbar h1{ margin:0; font-size: 1.5rem; font-weight: 800; color: var(--primary-dark); letter-spacing: -0.02em; }
+  header.topbar p{ margin: 4px 0 0; font-size: 0.85rem; color: var(--text-soft); }
 
   main{ flex:1; padding: 0 16px 100px; }
 
@@ -90,6 +82,17 @@
   }
   .info-card b{ color: var(--primary-dark); }
 
+  .section-label{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size: 0.74rem; font-weight: 800; color: var(--text-soft);
+    text-transform: uppercase; letter-spacing:.04em; margin: 18px 2px 8px;
+  }
+  .section-label .count{
+    background: var(--accent-soft); color: var(--accent); padding: 2px 9px;
+    border-radius: 999px; font-size: 0.68rem; letter-spacing: 0;
+  }
+  .section-label.first{ margin-top: 4px; }
+
   .ex-card{
     background: var(--card); border-radius: var(--radius); border:1px solid var(--border);
     box-shadow: var(--shadow); padding: 14px 14px 14px 12px; margin-bottom: 12px;
@@ -101,7 +104,7 @@
     display:flex; align-items:center; justify-content:center; color: var(--primary);
   }
   .ex-icon svg{ width:22px; height:22px; }
-  .ex-body{ flex:1; }
+  .ex-body{ flex:1; min-width:0; }
   .ex-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
   .ex-name{ font-weight: 700; font-size: 0.97rem; margin:0; }
   .ex-tag{
@@ -121,6 +124,20 @@
   .checkbox svg{ width:14px; height:14px; }
   .checkbox.checked{ background: var(--accent); border-color: var(--accent); color:#fff; }
 
+  .more-btn{
+    margin-top:10px; display:inline-flex; align-items:center; gap:6px;
+    background: var(--primary-soft); color: var(--primary-dark); border:none;
+    padding: 7px 13px; border-radius: 999px; font-size: 0.76rem; font-weight: 700; cursor:pointer;
+  }
+  .more-btn svg{ width:13px; height:13px; }
+
+  .goto-cardio{
+    display:flex; align-items:center; justify-content:center; gap:8px; width:100%;
+    background: transparent; border: 1.5px dashed var(--border); color: var(--primary-dark);
+    padding: 13px; border-radius: 16px; font-weight: 700; font-size: 0.88rem; cursor:pointer; margin: 4px 0 14px;
+  }
+  .goto-cardio svg{ width:16px; height:16px; }
+
   .complete-btn{
     width:100%; padding: 16px; border:none; border-radius: 16px; font-size: 1rem; font-weight: 800;
     background: var(--primary); color:#fff; box-shadow: var(--shadow); cursor:pointer; margin-top: 6px;
@@ -129,9 +146,7 @@
   .complete-btn.done{ background: var(--accent); }
   .complete-btn:active{ transform: scale(0.98); }
 
-  .status-row{
-    margin-top: 12px; text-align:center; font-size: 0.78rem; color: var(--text-soft);
-  }
+  .status-row{ margin-top: 12px; text-align:center; font-size: 0.78rem; color: var(--text-soft); }
 
   /* Tab bar */
   nav.tabbar{
@@ -167,13 +182,19 @@
     background: var(--card); color: var(--primary-dark); font-weight:700; font-size: 0.85rem; cursor:pointer;
   }
   .presets button.active{ background: var(--primary); color:#fff; border-color: var(--primary); }
-  .timer-controls{ display:flex; gap:12px; margin: 10px 0 20px; }
+  .timer-controls{ display:flex; gap:12px; margin: 10px 0 10px; }
   .timer-controls button{
     flex:1; padding: 15px 0; border-radius: 16px; border:none; font-weight:800; font-size: 0.95rem; cursor:pointer;
   }
   .btn-start{ background: var(--primary); color:#fff; box-shadow: var(--shadow); }
   .btn-reset{ background: var(--primary-soft); color: var(--primary-dark); }
-  .ring-wrap{ display:flex; justify-content:center; margin: 10px 0 4px; }
+
+  .video-link{
+    display:flex; align-items:center; justify-content:center; gap:7px;
+    text-align:center; color: var(--primary-dark); font-size: 0.82rem; font-weight:700;
+    margin: 0 0 18px; text-decoration:none;
+  }
+  .video-link svg{ width:14px; height:14px; }
 
   .history{ margin-top: 20px; }
   .history h3{ font-size: 0.85rem; color: var(--text-soft); margin: 0 0 8px; text-transform: uppercase; letter-spacing: .03em; }
@@ -184,6 +205,42 @@
   }
   .history-item span.d{ color: var(--text-soft); }
   .empty{ text-align:center; color: var(--text-soft); font-size: 0.85rem; padding: 10px 0; }
+
+  /* Modal */
+  .modal-overlay{
+    position:fixed; inset:0; background: rgba(23,12,38,0.5); display:flex; align-items:flex-end;
+    justify-content:center; z-index:200; opacity:0; pointer-events:none; transition: opacity .2s ease;
+  }
+  .modal-overlay.open{ opacity:1; pointer-events:auto; }
+  .modal-sheet{
+    background: var(--card); width:100%; max-width:480px; border-radius: 22px 22px 0 0;
+    max-height:88vh; overflow-y:auto; padding: 14px 20px calc(22px + env(safe-area-inset-bottom));
+    transform: translateY(24px); transition: transform .25s ease;
+  }
+  .modal-overlay.open .modal-sheet{ transform: translateY(0); }
+  .modal-handle{ width:38px; height:4px; background: var(--border); border-radius:99px; margin: 0 auto 14px; }
+  .modal-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .modal-title{ font-size: 1.12rem; font-weight: 800; color: var(--primary-dark); margin: 0 0 6px; }
+  .modal-close{
+    width:30px; height:30px; min-width:30px; border-radius:50%; border:none; background: var(--primary-soft);
+    color: var(--primary-dark); display:flex; align-items:center; justify-content:center; cursor:pointer;
+  }
+  .modal-close svg{ width:14px; height:14px; }
+  .modal-section{ margin-top:16px; }
+  .modal-section h4{ font-size: 0.7rem; text-transform: uppercase; letter-spacing:.05em; color: var(--text-soft); margin:0 0 4px; }
+  .modal-section p{ margin:0; font-size: 0.89rem; line-height:1.5; color: var(--text); }
+  .modal-tip{
+    background: var(--accent-soft); border-radius:14px; padding: 12px 14px; margin-top:16px;
+    font-size:0.85rem; line-height:1.45; border:1px solid var(--border);
+  }
+  .modal-tip b{ color: var(--primary-dark); }
+  .modal-video-btn{
+    margin-top:18px; width:100%; display:flex; align-items:center; justify-content:center; gap:8px;
+    padding:14px; border-radius:16px; border:none; background: var(--primary); color:#fff;
+    font-weight:800; font-size:0.92rem; cursor:pointer; text-decoration:none;
+  }
+  .modal-video-btn svg{ width:17px; height:17px; }
+  .modal-video-note{ text-align:center; font-size:0.72rem; color: var(--text-soft); margin-top:8px; }
 </style>
 </head>
 <body>
@@ -199,7 +256,8 @@
     <section id="tab-treino" class="tab active">
       <div class="info-card">
         <b>Por que mais máquinas?</b> Movimentos guiados oferecem mais estabilidade e controle de amplitude,
-        reduzindo impacto e sobrecarga nos membros — por isso este plano prioriza máquinas e cabos em vez de pesos livres.
+        reduzindo impacto e sobrecarga nos membros. Cada treino tem um aquecimento rápido seguido de
+        <b>5 exercícios principais, 100% em máquinas</b>.
       </div>
 
       <div class="segmented" id="workout-switch">
@@ -208,6 +266,8 @@
       </div>
 
       <div id="exercise-list"></div>
+
+      <button class="goto-cardio" id="goto-cardio-btn"></button>
 
       <button class="complete-btn" id="complete-day-btn">Concluir treino de hoje</button>
       <div class="status-row" id="status-row"></div>
@@ -236,6 +296,8 @@
         <button class="btn-reset" id="reset-btn">Reiniciar</button>
       </div>
 
+      <a class="video-link" id="cardio-video-link" href="#" target="_blank" rel="noopener"></a>
+
       <button class="complete-btn" id="complete-cardio-btn">Marcar cardio concluído</button>
 
       <div class="history">
@@ -252,38 +314,150 @@
 
 </div>
 
+<!-- MODAL: Saber mais -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-head">
+      <div>
+        <p class="modal-title" id="modal-title"></p>
+        <span class="ex-tag" id="modal-tag"></span>
+      </div>
+      <button class="modal-close" id="modal-close"></button>
+    </div>
+
+    <div class="modal-section">
+      <h4>Grupo muscular</h4>
+      <p id="modal-muscle"></p>
+    </div>
+    <div class="modal-section">
+      <h4>Como executar</h4>
+      <p id="modal-howto"></p>
+    </div>
+    <div class="modal-section">
+      <h4>Erro comum a evitar</h4>
+      <p id="modal-mistake"></p>
+    </div>
+
+    <div class="modal-tip" id="modal-tip"></div>
+
+    <a class="modal-video-btn" id="modal-video-btn" href="#" target="_blank" rel="noopener"></a>
+    <p class="modal-video-note">Abre no YouTube · requer internet</p>
+  </div>
+</div>
+
 <script>
 /* ---------------- ICONS (inline SVG, no emoji) ---------------- */
 const ICONS = {
   machine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="3" height="6" rx="1"></rect><rect x="19" y="9" width="3" height="6" rx="1"></rect><line x1="5" y1="12" x2="19" y2="12"></line><rect x="6.5" y="7" width="2.5" height="10" rx="1"></rect><rect x="15" y="7" width="2.5" height="10" rx="1"></rect></svg>',
   circuit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg>',
   mobility: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 6.3"></path><polyline points="20 4 20 11 13 11"></polyline></svg>',
-  walk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l7 8-7 8"></path><path d="M13 4l7 8-7 8"></path></svg>',
   cardio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg>',
-  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>',
+  info: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><line x1="12" y1="11" x2="12" y2="16"></line><circle cx="12" cy="7.3" r="0.9" fill="currentColor" stroke="none"></circle></svg>',
+  play: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polygon points="10 8 16 12 10 16" fill="currentColor" stroke="none"></polygon></svg>',
+  close: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="6" x2="18" y2="18"></line><line x1="6" y1="18" x2="18" y2="6"></line></svg>',
+  arrow: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="13 6 19 12 13 18"></polyline></svg>'
 };
 
 /* ---------------- DATA ---------------- */
+/* Cada treino: aquecimento (fora da contagem) + 5 exercícios principais, priorizando máquinas */
 const EXERCISES = {
-  superior: [
-    { name:"Circuito de ativação (core)", detail:"Polichinelo adaptado + Abdominal supra (tocando joelhos) + Prancha alta (toca ombro) + Abdominal infra curto — enca­deados, sem pausa entre eles", sets:"3 x 30s cada exercício", rest:"30s após o circuito", machine:false, icon:"circuit" },
-    { name:"Puxada alta (pulley, pegada pronada)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
-    { name:"Puxador frontal (pulldown, barra reta)", detail:"", sets:"3 x 12 reps", rest:"30s", machine:true, icon:"machine" },
-    { name:"Remada sentada (triângulo)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
-    { name:"Remada unilateral (polia baixa)", detail:"", sets:"3 x 12 reps cada lado", rest:"30s", machine:true, icon:"machine" },
-    { name:"Supino na máquina", detail:"Semana 1: 12–15 reps · Semana 2: 18–20 reps · Semana 3: 23–25 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
-    { name:"Crucifixo inverso (máquina)", detail:"", sets:"3 x 12 reps", rest:"60s", machine:true, icon:"machine" },
-    { name:"Cardio final — elíptico ou bike", detail:"Intensidade moderada", sets:"30 a 40 min", rest:"—", machine:true, icon:"cardio" },
-  ],
-  inferior: [
-    { name:"Mobilidade inicial", detail:"Alongamento de adutor (1x40s) + mobilidade de tornozelo (2x10 cada lado)", sets:"sem carga", rest:"10s entre séries", machine:false, icon:"mobility" },
-    { name:"Cadeira extensora", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
-    { name:"Leg press horizontal", detail:"", sets:"4 x 15 reps", rest:"30s", machine:true, icon:"machine" },
-    { name:"Mesa flexora (ou cadeira flexora)", detail:"Use o equipamento disponível na sua academia", sets:"4 x 12 reps", rest:"60s", machine:true, icon:"machine" },
-    { name:"Panturrilha na máquina (sentada)", detail:"", sets:"4 x 12 reps", rest:"45s", machine:true, icon:"machine" },
-    { name:"Avanço alternado (sem peso)", detail:"Movimento funcional, corpo livre", sets:"3 x 10 reps cada perna", rest:"60s", machine:false, icon:"walk" },
-    { name:"Cardio final — bicicleta", detail:"Intensidade moderada", sets:"20 min", rest:"—", machine:true, icon:"cardio" },
-  ]
+  superior: {
+    warmup: [
+      { name:"Polichinelo adaptado", detail:"Sem salto — versão de baixo impacto", sets:"3 x 30s", rest:"20s", machine:false, icon:"circuit",
+        muscle:"Aquecimento geral e ativação cardiovascular leve",
+        howTo:"Em pé, abra e feche braços e pernas ao mesmo tempo, sem saltar — como uma tesoura, mantendo sempre os pés em contato com o chão.",
+        mistake:"Fazer rápido demais ou saltando, o que tira o objetivo de ser de baixo impacto.",
+        tip:"Versão sem impacto do polichinelo tradicional — aquece o corpo e ativa a circulação sem sobrecarregar as articulações.",
+        videoUrl:"https://www.youtube.com/watch?v=84xybFDYk8g", videoTitle:"Polichinelo Adaptado (Abre e Fecha)" },
+    ],
+    main: [
+      { name:"Puxada alta (pulley, pegada pronada)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine",
+        muscle:"Latíssimo do dorso (costas), com bíceps auxiliando",
+        howTo:"Sentado, segure a barra com pegada pronada, um pouco mais aberta que os ombros. Puxe até perto do peito, cotovelos indo para baixo e para trás, e retorne controlado.",
+        mistake:"Usar impulso do corpo (balançar para trás) para puxar o peso.",
+        tip:"Evite puxar atrás da nuca. Priorize amplitude confortável e carga moderada — o movimento guiado já garante bom estímulo nas costas sem sobrecarregar os ombros.",
+        videoUrl:"https://www.youtube.com/watch?v=G7ZAG9GMIik", videoTitle:"Puxada alta pegada pronada: como fazer corretamente" },
+      { name:"Remada sentada (triângulo)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine",
+        muscle:"Meio das costas (trapézio, romboides) e latíssimo",
+        howTo:"Sentado, segure o triângulo com os braços estendidos à frente. Puxe em direção ao abdômen juntando as escápulas, mantendo a coluna ereta.",
+        mistake:"Curvar a coluna para trás tentando puxar mais peso.",
+        tip:"Mantenha o tronco estável, sem jogar o corpo para trás — isso protege a lombar e mantém o foco no trabalho das costas.",
+        videoUrl:"https://www.youtube.com/watch?v=2YebbYuuBJQ", videoTitle:"Remada baixa com triângulo: como fazer e postura correta" },
+      { name:"Supino na máquina", detail:"Semana 1: 12–15 reps · Semana 2: 18–20 reps · Semana 3: 23–25 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine",
+        muscle:"Peitoral, com tríceps e ombros auxiliando",
+        howTo:"Sentado, ajuste o banco para que os punhos fiquem na altura do peito. Empurre para a frente sem travar os cotovelos e retorne devagar.",
+        mistake:"Arquear demais as costas para conseguir empurrar mais carga.",
+        tip:"A máquina guia o movimento e reduz o risco de lesão — ideal para treinar peito com segurança e controle total da amplitude.",
+        videoUrl:"https://www.youtube.com/watch?v=e-F32H5SF6E", videoTitle:"Supino máquina: exemplo de execução correta" },
+      { name:"Crucifixo inverso (máquina)", detail:"", sets:"3 x 12 reps", rest:"60s", machine:true, icon:"machine",
+        muscle:"Deltoide posterior e parte superior das costas",
+        howTo:"Sentado de frente para o aparelho, com leve flexão nos cotovelos, abra os braços para trás juntando as escápulas, e retorne controlado.",
+        mistake:"Usar carga alta e fazer o movimento com impulso em vez de controle.",
+        tip:"Ótimo para a postura — fortalece a parte de trás do ombro, que costuma ficar mais fraca que a frente.",
+        videoUrl:"https://www.youtube.com/watch?v=5-HhI9yCuUo", videoTitle:"Peck Deck Invertido: Execução" },
+      { name:"Cadeira abdominal (máquina)", detail:"", sets:"3 x 15–20 reps", rest:"45s", machine:true, icon:"machine",
+        muscle:"Reto abdominal",
+        howTo:"Sente-se, ajuste o encosto na altura do peito e apoie-se conforme o aparelho. Flexione o tronco para frente contraindo o abdômen, e controle a volta sem soltar o peso.",
+        mistake:"Puxar o movimento só com braços e ombros, sem contrair o abdômen.",
+        tip:"Cargas leves a moderadas com movimento controlado ativam bem o abdômen, sem exigir impacto nem esforço da lombar.",
+        videoUrl:"https://www.youtube.com/watch?v=_g6RCj4cq4I", videoTitle:"Abdominal Sentado na Máquina" },
+    ]
+  },
+  inferior: {
+    warmup: [
+      { name:"Alongamento adutor", detail:"1 x 40s cada lado", sets:"sem carga", rest:"10s", machine:false, icon:"mobility",
+        muscle:"Adutores (parte interna da coxa)",
+        howTo:"Sentado ou em pé, afaste as pernas e incline o corpo suavemente para um lado até sentir o alongamento na parte interna da coxa oposta, sem dor.",
+        mistake:"Forçar além do limite confortável — o alongamento deve ser leve, nunca doloroso.",
+        tip:"Prepara a região interna da coxa — área comumente sensível no lipedema — sem gerar impacto.",
+        videoUrl:"https://www.youtube.com/watch?v=VFd1fO_H7do", videoTitle:"Alongamento dinâmico adutores: execução" },
+      { name:"Mobilidade de tornozelo", detail:"2 x 10 cada lado", sets:"sem carga", rest:"10s", machine:false, icon:"mobility",
+        muscle:"Tornozelo (mobilidade articular)",
+        howTo:"Em pé ou sentado, faça movimentos circulares e de flexão/extensão com o tornozelo, devagar, para os dois lados.",
+        mistake:"Fazer os movimentos rápido demais, sem controle.",
+        tip:"Melhora a estabilidade para caminhar e para os exercícios de perna que vêm a seguir no treino.",
+        videoUrl:"https://www.youtube.com/watch?v=CREaubVbw0I", videoTitle:"5 exercícios para mobilidade de tornozelo" },
+    ],
+    main: [
+      { name:"Cadeira extensora", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine",
+        muscle:"Quadríceps (frente da coxa)",
+        howTo:"Sentado, ajuste o encosto e o apoio das canelas. Estenda as pernas quase totalmente, sem travar o joelho, e volte controlado.",
+        mistake:"Estender com impulso (chutando o peso) em vez de controlar o movimento.",
+        tip:"Máquina segura para fortalecer a coxa, já que o movimento é guiado e não exige equilíbrio.",
+        videoUrl:"https://www.youtube.com/watch?v=RHgqvYAed_8", videoTitle:"Como fazer a cadeira extensora: técnica correta" },
+      { name:"Leg press horizontal", detail:"", sets:"4 x 15 reps", rest:"30s", machine:true, icon:"machine",
+        muscle:"Quadríceps, glúteos e posteriores de coxa",
+        howTo:"Deitado no aparelho, pés na plataforma na largura dos ombros. Flexione os joelhos levando a plataforma em direção ao corpo, sem tirar a lombar do banco, e empurre de volta sem travar os joelhos.",
+        mistake:"Descer demais, tirando a lombar do encosto do banco.",
+        tip:"O encosto apoia totalmente a lombar, reduzindo o estresse na coluna em comparação ao agachamento livre.",
+        videoUrl:"https://www.youtube.com/watch?v=DJswGKutp9s", videoTitle:"Leg press horizontal: como fazer de maneira correta" },
+      { name:"Mesa flexora (ou cadeira flexora)", detail:"Use o equipamento disponível na sua academia", sets:"4 x 12 reps", rest:"60s", machine:true, icon:"machine",
+        muscle:"Posteriores de coxa (isquiotibiais)",
+        howTo:"Deitado de bruços (ou sentado, na versão cadeira), flexione os joelhos trazendo os calcanhares em direção ao glúteo, e retorne controlado.",
+        mistake:"Levantar o quadril do banco durante o movimento.",
+        tip:"Equilibra o trabalho da coxa — treinar a parte de trás protege a articulação do joelho tanto quanto treinar a frente.",
+        videoUrl:"https://www.youtube.com/watch?v=sWSm1pWb3lw", videoTitle:"Mesa flexora: aprenda a execução correta" },
+      { name:"Panturrilha na máquina (sentada)", detail:"", sets:"4 x 12 reps", rest:"45s", machine:true, icon:"machine",
+        muscle:"Panturrilha (gastrocnêmio e sóleo)",
+        howTo:"Sentado, apoie a parte da frente dos pés na plataforma. Empurre para cima subindo na ponta dos pés, e desça controlado até alongar levemente.",
+        mistake:"Fazer o movimento curto demais, sem descer o suficiente para alongar.",
+        tip:"Fazer sentado tira a carga do joelho e do quadril, isolando a panturrilha com conforto.",
+        videoUrl:"https://www.youtube.com/watch?v=Bx6elAOgxMI", videoTitle:"Panturrilha na máquina (sentada)" },
+      { name:"Cadeira adutora (máquina)", detail:"", sets:"3 x 15 reps", rest:"45s", machine:true, icon:"machine",
+        muscle:"Adutores (parte interna da coxa)",
+        howTo:"Sentado, posicione as pernas nos apoios abertos. Feche as pernas controladamente até juntar, e volte devagar até a abertura inicial.",
+        mistake:"Usar carga alta e deixar o movimento ‘bater’ no fechar.",
+        tip:"Trabalha a parte interna da coxa de forma guiada e segura, sem exigir equilíbrio — boa alternativa de máquina a movimentos como afundo ou agachamento.",
+        videoUrl:"https://www.youtube.com/watch?v=qe750SFMNUc", videoTitle:"Cadeira adutora: como fazer?" },
+    ]
+  }
+};
+
+const CARDIO_VIDEO = {
+  superior: { url:"https://www.youtube.com/watch?v=T6jkShvVPtE", title:"Elíptico: dicas de uso correto" },
+  inferior: { url:"https://www.youtube.com/watch?v=ff3iNslAhcc", title:"Como utilizar a bike horizontal" }
 };
 
 /* ---------------- STORAGE HELPERS ---------------- */
@@ -291,20 +465,22 @@ const todayKey = () => new Date().toISOString().slice(0,10);
 const load = (k, fallback) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v===null||v===undefined ? fallback : v; }catch(e){ return fallback; } };
 const save = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
 
+function flatList(type){ return [...EXERCISES[type].warmup, ...EXERCISES[type].main]; }
+
 let currentWorkout = load('lf_currentWorkout', 'superior');
 let checkedState = load('lf_checked_' + todayKey() + '_' + currentWorkout, []);
 let completions = load('lf_completions', []); // [{date, type}]
 let cardioLog = load('lf_cardio_log', []); // [{date, minutes}]
 
 /* ---------------- TABS ---------------- */
+function activateTab(name){
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.tab === name));
+  document.querySelectorAll('section.tab').forEach(s=>s.classList.toggle('active', s.id === 'tab-' + name));
+}
 document.querySelectorAll('nav.tabbar button').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));
-    document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-  });
+  btn.addEventListener('click', ()=> activateTab(btn.dataset.tab));
 });
+document.getElementById('goto-cardio-btn').addEventListener('click', ()=> activateTab('cardio'));
 
 /* ---------------- WORKOUT SWITCH ---------------- */
 function setWorkout(type){
@@ -316,7 +492,7 @@ function setWorkout(type){
   });
   renderExercises();
   renderStatus();
-  // sync cardio defaults to workout type
+  renderCardioVideoLink();
   if(!timerRunning){
     const mins = type === 'superior' ? 30 : 20;
     setPreset(mins, true);
@@ -327,28 +503,53 @@ document.querySelectorAll('#workout-switch button').forEach(b=>{
 });
 
 /* ---------------- RENDER EXERCISES ---------------- */
+function buildCard(ex, i, done){
+  const card = document.createElement('div');
+  card.className = 'ex-card' + (done ? ' done' : '');
+  card.innerHTML = `
+    <div class="ex-icon">${ICONS[ex.icon]}</div>
+    <div class="ex-body">
+      <div class="ex-top">
+        <p class="ex-name">${ex.name}</p>
+        <span class="ex-tag ${ex.machine ? 'machine' : 'body'}">${ex.machine ? 'Máquina' : 'Peso corporal'}</span>
+      </div>
+      ${ex.detail ? `<p class="ex-detail">${ex.detail}</p>` : ''}
+      <div class="ex-meta"><span><b>Séries:</b> ${ex.sets}</span><span><b>Descanso:</b> ${ex.rest}</span></div>
+      <button class="more-btn" type="button">${ICONS.info}Saber mais</button>
+    </div>
+    <div class="checkbox ${done ? 'checked' : ''}" data-i="${i}">${ICONS.check}</div>
+  `;
+  card.querySelector('.checkbox').addEventListener('click', ()=> toggleExercise(i));
+  card.querySelector('.more-btn').addEventListener('click', ()=> openModal(ex));
+  return card;
+}
+
 function renderExercises(){
   const list = document.getElementById('exercise-list');
   list.innerHTML = '';
-  EXERCISES[currentWorkout].forEach((ex, i)=>{
-    const done = checkedState.includes(i);
-    const card = document.createElement('div');
-    card.className = 'ex-card' + (done ? ' done' : '');
-    card.innerHTML = `
-      <div class="ex-icon">${ICONS[ex.icon]}</div>
-      <div class="ex-body">
-        <div class="ex-top">
-          <p class="ex-name">${ex.name}</p>
-          <span class="ex-tag ${ex.machine ? 'machine' : 'body'}">${ex.machine ? 'Máquina' : 'Peso corporal'}</span>
-        </div>
-        ${ex.detail ? `<p class="ex-detail">${ex.detail}</p>` : ''}
-        <div class="ex-meta"><span><b>Séries:</b> ${ex.sets}</span><span><b>Descanso:</b> ${ex.rest}</span></div>
-      </div>
-      <div class="checkbox ${done ? 'checked' : ''}" data-i="${i}">${ICONS.check}</div>
-    `;
-    card.querySelector('.checkbox').addEventListener('click', ()=> toggleExercise(i));
-    list.appendChild(card);
+  const data = EXERCISES[currentWorkout];
+  const all = flatList(currentWorkout);
+
+  const warmHead = document.createElement('div');
+  warmHead.className = 'section-label first';
+  warmHead.innerHTML = `<span>Aquecimento</span><span class="count">não conta nos 5</span>`;
+  list.appendChild(warmHead);
+  data.warmup.forEach((ex, idx)=>{
+    list.appendChild(buildCard(ex, idx, checkedState.includes(idx)));
   });
+
+  const mainHead = document.createElement('div');
+  mainHead.className = 'section-label';
+  mainHead.innerHTML = `<span>Treino principal</span><span class="count">${data.main.length} exercícios · máquina</span>`;
+  list.appendChild(mainHead);
+  data.main.forEach((ex, idx)=>{
+    const i = data.warmup.length + idx;
+    list.appendChild(buildCard(ex, i, checkedState.includes(i)));
+  });
+
+  const gotoBtn = document.getElementById('goto-cardio-btn');
+  gotoBtn.innerHTML = `Finalizar com o cardio${ICONS.arrow}`;
+
   updateCompleteButton();
 }
 
@@ -372,8 +573,7 @@ document.getElementById('complete-day-btn').addEventListener('click', ()=>{
     completions = completions.filter(c => !(c.date === todayKey() && c.type === currentWorkout));
   } else {
     completions.push({ date: todayKey(), type: currentWorkout });
-    // mark all exercises as checked for a satisfying finish
-    checkedState = EXERCISES[currentWorkout].map((_,i)=>i);
+    checkedState = flatList(currentWorkout).map((_,i)=>i);
     save('lf_checked_' + todayKey() + '_' + currentWorkout, checkedState);
   }
   save('lf_completions', completions);
@@ -389,6 +589,28 @@ function renderStatus(){
   const fmt = d => d ? new Date(d+'T00:00:00').toLocaleDateString('pt-BR', {day:'2-digit', month:'short'}) : '—';
   row.innerHTML = `Total de treinos: <b>${total}</b> &nbsp;·&nbsp; Último superior: ${fmt(lastSup && lastSup.date)} &nbsp;·&nbsp; Último inferior: ${fmt(lastInf && lastInf.date)}`;
 }
+
+/* ---------------- MODAL "SABER MAIS" ---------------- */
+function openModal(ex){
+  document.getElementById('modal-title').textContent = ex.name;
+  const tag = document.getElementById('modal-tag');
+  tag.textContent = ex.machine ? 'Máquina' : 'Peso corporal';
+  tag.className = 'ex-tag ' + (ex.machine ? 'machine' : 'body');
+  document.getElementById('modal-muscle').textContent = ex.muscle || '—';
+  document.getElementById('modal-howto').textContent = ex.howTo || '—';
+  document.getElementById('modal-mistake').textContent = ex.mistake || '—';
+  document.getElementById('modal-tip').innerHTML = `<b>Dica para lipedema:</b> ${ex.tip || ''}`;
+  const videoBtn = document.getElementById('modal-video-btn');
+  videoBtn.href = ex.videoUrl || '#';
+  videoBtn.innerHTML = `${ICONS.play}Assistir vídeo do exercício`;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); }
+document.getElementById('modal-close').innerHTML = ICONS.close;
+document.getElementById('modal-close').addEventListener('click', closeModal);
+document.getElementById('modal-overlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'modal-overlay') closeModal();
+});
 
 /* ---------------- CARDIO TIMER ---------------- */
 let totalSeconds = 20*60;
@@ -469,6 +691,13 @@ function renderCardioHistory(){
   `).join('');
 }
 
+function renderCardioVideoLink(){
+  const info = CARDIO_VIDEO[currentWorkout];
+  const link = document.getElementById('cardio-video-link');
+  link.href = info.url;
+  link.innerHTML = `${ICONS.play}${info.title}`;
+}
+
 /* ---------------- INIT ---------------- */
 document.getElementById('nav-icon-treino').innerHTML = ICONS.machine;
 document.getElementById('nav-icon-cardio').innerHTML = ICONS.cardio;
@@ -479,6 +708,7 @@ renderExercises();
 renderStatus();
 setPreset(currentWorkout === 'superior' ? 30 : 20, true);
 renderCardioHistory();
+renderCardioVideoLink();
 
 /* ---------------- PWA SERVICE WORKER ---------------- */
 if('serviceWorker' in navigator){
