@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lipefitness-cache-v1';
+const CACHE_NAME = 'lipefitness-cache-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -23,16 +23,20 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+/* Network-first: sempre busca a versão mais nova quando há internet,
+   e só usa a cópia salva (cache) quando o aparelho está offline.
+   Isso evita o app ficar "preso" numa versão antiga depois de uma atualização. */
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      return cached || fetch(event.request).then((response) => {
-        if (response && response.status === 200 && event.request.method === 'GET') {
+    fetch(event.request)
+      .then((response) => {
+        if (response && response.status === 200) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
         }
         return response;
-      }).catch(() => cached);
-    })
+      })
+      .catch(() => caches.match(event.request))
   );
 });
