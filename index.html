@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>LipeFitness</title>
+<meta name="description" content="Treino adaptado com foco em máquinas, para quem tem lipedema.">
+
+<!-- iPhone / PWA -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LipeFitness">
+<meta name="theme-color" content="#6B3FA0">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+
+<style>
+  :root{
+    --bg: #F6F4FB;
+    --card: #FFFFFF;
+    --primary: #6B3FA0;
+    --primary-dark: #4F2D79;
+    --primary-soft: #EFE7F9;
+    --accent: #2FA89A;
+    --accent-soft: #E3F5F2;
+    --text: #2A2438;
+    --text-soft: #78708C;
+    --border: #E8E2F2;
+    --shadow: 0 2px 10px rgba(79,45,121,0.08);
+    --radius: 18px;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg: #17131F;
+      --card: #231D30;
+      --primary: #B48FE0;
+      --primary-dark: #9A72D1;
+      --primary-soft: #2C2340;
+      --accent: #4FD6C4;
+      --accent-soft: #1E3733;
+      --text: #F1EDF9;
+      --text-soft: #AFA5C6;
+      --border: #332A47;
+      --shadow: 0 2px 10px rgba(0,0,0,0.35);
+    }
+  }
+  *{ box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html,body{ height:100%; }
+  body{
+    margin:0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior-y: none;
+  }
+  #app{ max-width: 480px; margin: 0 auto; min-height: 100vh; display:flex; flex-direction:column; }
+
+  header.topbar{
+    padding: 18px 20px 14px;
+    text-align:center;
+  }
+  header.topbar h1{
+    margin:0; font-size: 1.5rem; font-weight: 800; color: var(--primary-dark);
+    letter-spacing: -0.02em;
+  }
+  header.topbar p{
+    margin: 4px 0 0; font-size: 0.85rem; color: var(--text-soft);
+  }
+
+  main{ flex:1; padding: 0 16px 100px; }
+
+  .segmented{
+    display:flex; background: var(--primary-soft); border-radius: 14px;
+    padding: 4px; margin: 10px 0 18px; gap:4px;
+  }
+  .segmented button{
+    flex:1; border:none; background:transparent; padding: 10px 0;
+    font-size: 0.92rem; font-weight: 700; color: var(--primary-dark);
+    border-radius: 11px; cursor:pointer; transition: all .15s ease;
+  }
+  .segmented button.active{ background: var(--primary); color:#fff; box-shadow: var(--shadow); }
+
+  .info-card{
+    background: var(--accent-soft); border-radius: var(--radius);
+    padding: 14px 16px; font-size: 0.82rem; color: var(--text); line-height:1.45;
+    margin-bottom: 16px; border: 1px solid var(--border);
+  }
+  .info-card b{ color: var(--primary-dark); }
+
+  .ex-card{
+    background: var(--card); border-radius: var(--radius); border:1px solid var(--border);
+    box-shadow: var(--shadow); padding: 14px 14px 14px 12px; margin-bottom: 12px;
+    display:flex; gap:12px; align-items:flex-start; transition: opacity .2s ease;
+  }
+  .ex-card.done{ opacity: 0.55; }
+  .ex-icon{
+    width:42px; height:42px; min-width:42px; border-radius: 12px; background: var(--primary-soft);
+    display:flex; align-items:center; justify-content:center; color: var(--primary);
+  }
+  .ex-icon svg{ width:22px; height:22px; }
+  .ex-body{ flex:1; }
+  .ex-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .ex-name{ font-weight: 700; font-size: 0.97rem; margin:0; }
+  .ex-tag{
+    font-size: 0.68rem; font-weight: 700; padding: 3px 8px; border-radius: 999px;
+    white-space:nowrap; margin-top:2px;
+  }
+  .ex-tag.machine{ background: var(--accent-soft); color: var(--accent); }
+  .ex-tag.body{ background: var(--primary-soft); color: var(--primary-dark); }
+  .ex-detail{ font-size: 0.8rem; color: var(--text-soft); margin: 4px 0 0; line-height:1.4; }
+  .ex-meta{ font-size: 0.78rem; color: var(--text); margin-top: 6px; display:flex; gap:14px; flex-wrap:wrap; }
+  .ex-meta span b{ color: var(--primary-dark); }
+  .checkbox{
+    width:26px; height:26px; min-width:26px; border-radius: 50%; border:2px solid var(--border);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; background: var(--card);
+    color: transparent; transition: all .15s ease;
+  }
+  .checkbox svg{ width:14px; height:14px; }
+  .checkbox.checked{ background: var(--accent); border-color: var(--accent); color:#fff; }
+
+  .complete-btn{
+    width:100%; padding: 16px; border:none; border-radius: 16px; font-size: 1rem; font-weight: 800;
+    background: var(--primary); color:#fff; box-shadow: var(--shadow); cursor:pointer; margin-top: 6px;
+    transition: all .15s ease;
+  }
+  .complete-btn.done{ background: var(--accent); }
+  .complete-btn:active{ transform: scale(0.98); }
+
+  .status-row{
+    margin-top: 12px; text-align:center; font-size: 0.78rem; color: var(--text-soft);
+  }
+
+  /* Tab bar */
+  nav.tabbar{
+    position: fixed; bottom:0; left:0; right:0;
+    background: var(--card); border-top: 1px solid var(--border);
+    display:flex; max-width: 480px; margin: 0 auto;
+    padding-bottom: env(safe-area-inset-bottom);
+    box-shadow: 0 -2px 12px rgba(79,45,121,0.08);
+  }
+  nav.tabbar button{
+    flex:1; border:none; background:transparent; padding: 10px 0 8px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    color: var(--text-soft); font-size: 0.7rem; font-weight:700;
+  }
+  nav.tabbar button .icon{ display:flex; }
+  nav.tabbar button .icon svg{ width:22px; height:22px; }
+  nav.tabbar button.active{ color: var(--primary); }
+
+  section.tab{ display:none; animation: fade .2s ease; }
+  section.tab.active{ display:block; }
+  @keyframes fade{ from{ opacity:0; transform: translateY(4px);} to{ opacity:1; transform:none;} }
+
+  /* Cardio tab */
+  .timer-wrap{ text-align:center; margin: 18px 0 6px; }
+  .timer-display{
+    font-size: 3.4rem; font-weight: 800; font-variant-numeric: tabular-nums;
+    color: var(--primary-dark); letter-spacing: -0.02em;
+  }
+  .timer-sub{ color: var(--text-soft); font-size: 0.85rem; margin-top: -4px; }
+  .presets{ display:flex; gap:8px; justify-content:center; margin: 18px 0; }
+  .presets button{
+    padding: 9px 16px; border-radius: 999px; border: 1px solid var(--border);
+    background: var(--card); color: var(--primary-dark); font-weight:700; font-size: 0.85rem; cursor:pointer;
+  }
+  .presets button.active{ background: var(--primary); color:#fff; border-color: var(--primary); }
+  .timer-controls{ display:flex; gap:12px; margin: 10px 0 20px; }
+  .timer-controls button{
+    flex:1; padding: 15px 0; border-radius: 16px; border:none; font-weight:800; font-size: 0.95rem; cursor:pointer;
+  }
+  .btn-start{ background: var(--primary); color:#fff; box-shadow: var(--shadow); }
+  .btn-reset{ background: var(--primary-soft); color: var(--primary-dark); }
+  .ring-wrap{ display:flex; justify-content:center; margin: 10px 0 4px; }
+
+  .history{ margin-top: 20px; }
+  .history h3{ font-size: 0.85rem; color: var(--text-soft); margin: 0 0 8px; text-transform: uppercase; letter-spacing: .03em; }
+  .history-item{
+    background: var(--card); border:1px solid var(--border); border-radius: 14px;
+    padding: 10px 14px; font-size: 0.85rem; display:flex; justify-content:space-between;
+    margin-bottom: 8px; color: var(--text);
+  }
+  .history-item span.d{ color: var(--text-soft); }
+  .empty{ text-align:center; color: var(--text-soft); font-size: 0.85rem; padding: 10px 0; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <header class="topbar">
+    <h1>LipeFitness</h1>
+    <p>Treino adaptado · foco em máquinas</p>
+  </header>
+
+  <main>
+    <!-- TREINO TAB -->
+    <section id="tab-treino" class="tab active">
+      <div class="info-card">
+        <b>Por que mais máquinas?</b> Movimentos guiados oferecem mais estabilidade e controle de amplitude,
+        reduzindo impacto e sobrecarga nos membros — por isso este plano prioriza máquinas e cabos em vez de pesos livres.
+      </div>
+
+      <div class="segmented" id="workout-switch">
+        <button data-w="superior">Superior</button>
+        <button data-w="inferior">Inferior</button>
+      </div>
+
+      <div id="exercise-list"></div>
+
+      <button class="complete-btn" id="complete-day-btn">Concluir treino de hoje</button>
+      <div class="status-row" id="status-row"></div>
+    </section>
+
+    <!-- CARDIO TAB -->
+    <section id="tab-cardio" class="tab">
+      <div class="info-card">
+        <b>Aeróbico recomendado:</b> elíptico ou bicicleta, intensidade moderada — 30–40 min em dias de Superior,
+        20 min em dias de Inferior. Use o cronômetro abaixo para acompanhar.
+      </div>
+
+      <div class="timer-wrap">
+        <div class="timer-display" id="timer-display">20:00</div>
+        <div class="timer-sub" id="timer-sub">bicicleta / elíptico · intensidade moderada</div>
+      </div>
+
+      <div class="presets" id="presets">
+        <button data-min="20">20 min</button>
+        <button data-min="30">30 min</button>
+        <button data-min="40">40 min</button>
+      </div>
+
+      <div class="timer-controls">
+        <button class="btn-start" id="start-btn">Iniciar</button>
+        <button class="btn-reset" id="reset-btn">Reiniciar</button>
+      </div>
+
+      <button class="complete-btn" id="complete-cardio-btn">Marcar cardio concluído</button>
+
+      <div class="history">
+        <h3>Histórico recente</h3>
+        <div id="cardio-history"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar">
+    <button data-tab="treino" class="active"><span class="icon" id="nav-icon-treino"></span>Treino</button>
+    <button data-tab="cardio"><span class="icon" id="nav-icon-cardio"></span>Cardio</button>
+  </nav>
+
+</div>
+
+<script>
+/* ---------------- ICONS (inline SVG, no emoji) ---------------- */
+const ICONS = {
+  machine: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="9" width="3" height="6" rx="1"></rect><rect x="19" y="9" width="3" height="6" rx="1"></rect><line x1="5" y1="12" x2="19" y2="12"></line><rect x="6.5" y="7" width="2.5" height="10" rx="1"></rect><rect x="15" y="7" width="2.5" height="10" rx="1"></rect></svg>',
+  circuit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"></circle><circle cx="12" cy="12" r="4"></circle><circle cx="12" cy="12" r="0.8" fill="currentColor" stroke="none"></circle></svg>',
+  mobility: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 6.3"></path><polyline points="20 4 20 11 13 11"></polyline></svg>',
+  walk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4l7 8-7 8"></path><path d="M13 4l7 8-7 8"></path></svg>',
+  cardio: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"></path></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'
+};
+
+/* ---------------- DATA ---------------- */
+const EXERCISES = {
+  superior: [
+    { name:"Circuito de ativação (core)", detail:"Polichinelo adaptado + Abdominal supra (tocando joelhos) + Prancha alta (toca ombro) + Abdominal infra curto — enca­deados, sem pausa entre eles", sets:"3 x 30s cada exercício", rest:"30s após o circuito", machine:false, icon:"circuit" },
+    { name:"Puxada alta (pulley, pegada pronada)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
+    { name:"Puxador frontal (pulldown, barra reta)", detail:"", sets:"3 x 12 reps", rest:"30s", machine:true, icon:"machine" },
+    { name:"Remada sentada (triângulo)", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
+    { name:"Remada unilateral (polia baixa)", detail:"", sets:"3 x 12 reps cada lado", rest:"30s", machine:true, icon:"machine" },
+    { name:"Supino na máquina", detail:"Semana 1: 12–15 reps · Semana 2: 18–20 reps · Semana 3: 23–25 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
+    { name:"Crucifixo inverso (máquina)", detail:"", sets:"3 x 12 reps", rest:"60s", machine:true, icon:"machine" },
+    { name:"Cardio final — elíptico ou bike", detail:"Intensidade moderada", sets:"30 a 40 min", rest:"—", machine:true, icon:"cardio" },
+  ],
+  inferior: [
+    { name:"Mobilidade inicial", detail:"Alongamento de adutor (1x40s) + mobilidade de tornozelo (2x10 cada lado)", sets:"sem carga", rest:"10s entre séries", machine:false, icon:"mobility" },
+    { name:"Cadeira extensora", detail:"Semana 1: 8–10 reps · Semana 2: 12–15 reps · Semana 3: 15–20 reps", sets:"4 séries", rest:"1 min", machine:true, icon:"machine" },
+    { name:"Leg press horizontal", detail:"", sets:"4 x 15 reps", rest:"30s", machine:true, icon:"machine" },
+    { name:"Mesa flexora (ou cadeira flexora)", detail:"Use o equipamento disponível na sua academia", sets:"4 x 12 reps", rest:"60s", machine:true, icon:"machine" },
+    { name:"Panturrilha na máquina (sentada)", detail:"", sets:"4 x 12 reps", rest:"45s", machine:true, icon:"machine" },
+    { name:"Avanço alternado (sem peso)", detail:"Movimento funcional, corpo livre", sets:"3 x 10 reps cada perna", rest:"60s", machine:false, icon:"walk" },
+    { name:"Cardio final — bicicleta", detail:"Intensidade moderada", sets:"20 min", rest:"—", machine:true, icon:"cardio" },
+  ]
+};
+
+/* ---------------- STORAGE HELPERS ---------------- */
+const todayKey = () => new Date().toISOString().slice(0,10);
+const load = (k, fallback) => { try{ const v = JSON.parse(localStorage.getItem(k)); return v===null||v===undefined ? fallback : v; }catch(e){ return fallback; } };
+const save = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+
+let currentWorkout = load('lf_currentWorkout', 'superior');
+let checkedState = load('lf_checked_' + todayKey() + '_' + currentWorkout, []);
+let completions = load('lf_completions', []); // [{date, type}]
+let cardioLog = load('lf_cardio_log', []); // [{date, minutes}]
+
+/* ---------------- TABS ---------------- */
+document.querySelectorAll('nav.tabbar button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section.tab').forEach(s=>s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- WORKOUT SWITCH ---------------- */
+function setWorkout(type){
+  currentWorkout = type;
+  save('lf_currentWorkout', type);
+  checkedState = load('lf_checked_' + todayKey() + '_' + type, []);
+  document.querySelectorAll('#workout-switch button').forEach(b=>{
+    b.classList.toggle('active', b.dataset.w === type);
+  });
+  renderExercises();
+  renderStatus();
+  // sync cardio defaults to workout type
+  if(!timerRunning){
+    const mins = type === 'superior' ? 30 : 20;
+    setPreset(mins, true);
+  }
+}
+document.querySelectorAll('#workout-switch button').forEach(b=>{
+  b.addEventListener('click', ()=> setWorkout(b.dataset.w));
+});
+
+/* ---------------- RENDER EXERCISES ---------------- */
+function renderExercises(){
+  const list = document.getElementById('exercise-list');
+  list.innerHTML = '';
+  EXERCISES[currentWorkout].forEach((ex, i)=>{
+    const done = checkedState.includes(i);
+    const card = document.createElement('div');
+    card.className = 'ex-card' + (done ? ' done' : '');
+    card.innerHTML = `
+      <div class="ex-icon">${ICONS[ex.icon]}</div>
+      <div class="ex-body">
+        <div class="ex-top">
+          <p class="ex-name">${ex.name}</p>
+          <span class="ex-tag ${ex.machine ? 'machine' : 'body'}">${ex.machine ? 'Máquina' : 'Peso corporal'}</span>
+        </div>
+        ${ex.detail ? `<p class="ex-detail">${ex.detail}</p>` : ''}
+        <div class="ex-meta"><span><b>Séries:</b> ${ex.sets}</span><span><b>Descanso:</b> ${ex.rest}</span></div>
+      </div>
+      <div class="checkbox ${done ? 'checked' : ''}" data-i="${i}">${ICONS.check}</div>
+    `;
+    card.querySelector('.checkbox').addEventListener('click', ()=> toggleExercise(i));
+    list.appendChild(card);
+  });
+  updateCompleteButton();
+}
+
+function toggleExercise(i){
+  const idx = checkedState.indexOf(i);
+  if(idx >= 0) checkedState.splice(idx,1); else checkedState.push(i);
+  save('lf_checked_' + todayKey() + '_' + currentWorkout, checkedState);
+  renderExercises();
+}
+
+function updateCompleteButton(){
+  const btn = document.getElementById('complete-day-btn');
+  const doneToday = completions.some(c => c.date === todayKey() && c.type === currentWorkout);
+  btn.classList.toggle('done', doneToday);
+  btn.textContent = doneToday ? 'Treino concluído hoje' : 'Concluir treino de hoje';
+}
+
+document.getElementById('complete-day-btn').addEventListener('click', ()=>{
+  const doneToday = completions.some(c => c.date === todayKey() && c.type === currentWorkout);
+  if(doneToday){
+    completions = completions.filter(c => !(c.date === todayKey() && c.type === currentWorkout));
+  } else {
+    completions.push({ date: todayKey(), type: currentWorkout });
+    // mark all exercises as checked for a satisfying finish
+    checkedState = EXERCISES[currentWorkout].map((_,i)=>i);
+    save('lf_checked_' + todayKey() + '_' + currentWorkout, checkedState);
+  }
+  save('lf_completions', completions);
+  renderExercises();
+  renderStatus();
+});
+
+function renderStatus(){
+  const row = document.getElementById('status-row');
+  const lastSup = completions.filter(c=>c.type==='superior').sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const lastInf = completions.filter(c=>c.type==='inferior').sort((a,b)=>b.date.localeCompare(a.date))[0];
+  const total = completions.length;
+  const fmt = d => d ? new Date(d+'T00:00:00').toLocaleDateString('pt-BR', {day:'2-digit', month:'short'}) : '—';
+  row.innerHTML = `Total de treinos: <b>${total}</b> &nbsp;·&nbsp; Último superior: ${fmt(lastSup && lastSup.date)} &nbsp;·&nbsp; Último inferior: ${fmt(lastInf && lastInf.date)}`;
+}
+
+/* ---------------- CARDIO TIMER ---------------- */
+let totalSeconds = 20*60;
+let remaining = totalSeconds;
+let timerRunning = false;
+let timerInterval = null;
+
+function fmtTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = Math.floor(s%60).toString().padStart(2,'0');
+  return m + ':' + sec;
+}
+function renderTimer(){
+  document.getElementById('timer-display').textContent = fmtTime(remaining);
+}
+function setPreset(min, silent){
+  totalSeconds = min*60;
+  remaining = totalSeconds;
+  document.querySelectorAll('#presets button').forEach(b=> b.classList.toggle('active', Number(b.dataset.min) === min));
+  renderTimer();
+  if(!silent){ pauseTimer(); }
+}
+document.querySelectorAll('#presets button').forEach(b=>{
+  b.addEventListener('click', ()=> setPreset(Number(b.dataset.min)));
+});
+
+function startTimer(){
+  if(timerRunning) return;
+  timerRunning = true;
+  document.getElementById('start-btn').textContent = 'Pausar';
+  timerInterval = setInterval(()=>{
+    remaining -= 1;
+    if(remaining <= 0){
+      remaining = 0;
+      renderTimer();
+      pauseTimer();
+      document.getElementById('timer-sub').textContent = 'Tempo concluído!';
+      return;
+    }
+    renderTimer();
+  }, 1000);
+}
+function pauseTimer(){
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.getElementById('start-btn').textContent = 'Iniciar';
+}
+document.getElementById('start-btn').addEventListener('click', ()=>{
+  timerRunning ? pauseTimer() : startTimer();
+});
+document.getElementById('reset-btn').addEventListener('click', ()=>{
+  pauseTimer();
+  remaining = totalSeconds;
+  renderTimer();
+  document.getElementById('timer-sub').textContent = 'bicicleta / elíptico · intensidade moderada';
+});
+
+document.getElementById('complete-cardio-btn').addEventListener('click', ()=>{
+  const minutesDone = Math.round((totalSeconds - remaining) / 60) || Math.round(totalSeconds/60);
+  cardioLog.unshift({ date: todayKey(), minutes: minutesDone });
+  cardioLog = cardioLog.slice(0, 10);
+  save('lf_cardio_log', cardioLog);
+  renderCardioHistory();
+  document.getElementById('timer-sub').textContent = 'Sessão registrada';
+});
+
+function renderCardioHistory(){
+  const wrap = document.getElementById('cardio-history');
+  if(cardioLog.length === 0){
+    wrap.innerHTML = '<div class="empty">Nenhuma sessão registrada ainda.</div>';
+    return;
+  }
+  wrap.innerHTML = cardioLog.map(c => `
+    <div class="history-item">
+      <span class="d">${new Date(c.date+'T00:00:00').toLocaleDateString('pt-BR', {day:'2-digit', month:'short'})}</span>
+      <span>${c.minutes} min</span>
+    </div>
+  `).join('');
+}
+
+/* ---------------- INIT ---------------- */
+document.getElementById('nav-icon-treino').innerHTML = ICONS.machine;
+document.getElementById('nav-icon-cardio').innerHTML = ICONS.cardio;
+document.querySelectorAll('#workout-switch button').forEach(b=>{
+  b.classList.toggle('active', b.dataset.w === currentWorkout);
+});
+renderExercises();
+renderStatus();
+setPreset(currentWorkout === 'superior' ? 30 : 20, true);
+renderCardioHistory();
+
+/* ---------------- PWA SERVICE WORKER ---------------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('service-worker.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
